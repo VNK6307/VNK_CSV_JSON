@@ -8,7 +8,6 @@ import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,15 +22,16 @@ public class Main {
         List<Employee> list = parseCSV(columnMapping, fileName);
         list.forEach(System.out::println);
 
-        String json = listToJson(list);
-        System.out.println(json);
+        String jsonString = listToJson(list);
+        System.out.println(jsonString);
 
-        createJson(json);
+        String jsonFile = "data.json";
+        createJson(jsonString, jsonFile);
     }// main
 
     public static List<Employee> parseCSV(String[] columhMapping, String fileName) {
         List<Employee> list = new ArrayList<>();
-        try (CSVReader csvReader = new CSVReader(new FileReader("data.csv"))) {
+        try (CSVReader csvReader = new CSVReader(new FileReader(fileName))) {
             ColumnPositionMappingStrategy<Employee> strategy = new ColumnPositionMappingStrategy<>();
             strategy.setType(Employee.class);
             strategy.setColumnMapping(columhMapping);
@@ -53,8 +53,8 @@ public class Main {
         return gson.toJson(list, listType);
     }
 
-    public static void createJson(String input) {
-        try (FileWriter writer = new FileWriter("data.json", false)) {
+    public static void createJson(String input, String fileName) {
+        try (FileWriter writer = new FileWriter(fileName, false)) {
             writer.write(input);
             writer.flush();
         } catch (IOException exception) {
